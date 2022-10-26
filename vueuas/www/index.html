@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.ico">
+    <title>uas</title>
+    <script src="js/authentication.js"></script>
+    <script src="js/navigation.js"></script>
+</head>
+<body>
+    <noscript>
+        <strong>We're sorry but uas doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <script>
+        let userToken = findUsefulToken()
+        navigateTo((userToken === null || userToken === '') ? '/login.html': '/home.html')
+    </script>
+</body>
+</html>

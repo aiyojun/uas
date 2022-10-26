@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>uas</title>
+    <link rel="stylesheet" type="text/css" href="fonts/roboto/roboto.css">
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="micro-filemanager/filemanager.css">
+    <script src="micro-filemanager/filemanager.umd.min.js"></script>
+</head>
+<body style="font-family: Roboto, Helvetica, sans-serif;">
+    <div id="app">
+        <filemanager prefix="/fs"></filemanager>
+    </div>
+    <script>
+        new Vue({components: {filemanager: filemanager}}).$mount('#app')
+    </script>
+</body>
+</html>

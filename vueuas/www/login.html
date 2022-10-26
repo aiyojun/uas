@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <link rel="stylesheet" href="./fonts/roboto/roboto.css">
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+    <link rel="stylesheet" href="./micro-login/login.css">
+    <script src="./micro-login/login.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; }
+    </style>
+</head>
+<body style="font-family: Roboto, Helvetica, sans-serif;">
+    <div id="app">
+        <Login :navigateTo="'/home.html'"></Login>
+    </div>
+    <script>
+        new Vue({components: {Login: login}}).$mount('#app')
+    </script>
+</body>
+</html>
