@@ -107,8 +107,8 @@ function trimPath(path, isDir=true) {
 
 class Communicator {
   list(token, path = '/', prefix = '/fs') {
-    console.info(`Communicator ${trimPath(`${prefix}${path}`)}`)
-    console.info(`token: ${token}`)
+    // console.info(`Communicator ${trimPath(`${prefix}${path}`)}`)
+    // console.info(`token: ${token}`)
     return axios.get(trimPath(`${prefix}${path}`), {
       params: {id: token},
       headers: {
@@ -161,7 +161,7 @@ export default {
   mounted() {
     const self = this
     FilePond.create(this.$refs.pondEl, {
-      server: trimPath(`${self.prefix}${self.rootPath}`),
+      server: {url: trimPath(`${self.prefix}${self.rootPath}`), headers: {id: self.token}},
       allowMultiple: true,
       name: 'filepond',
     })
@@ -238,7 +238,8 @@ export default {
     enterDirectory(d) {
       this.clearWidget()
       this.rootPath = `${this.rootPath}${d}/`
-      FilePond.setOptions({server: trimPath(`${this.prefix}${this.rootPath}`)})
+      const self = this
+      FilePond.setOptions({server: {url:trimPath(`${this.prefix}${this.rootPath}`), headers: {id: self.token}}})
       this.communicator.list(this.token, this.rootPath, this.prefix).then(response => this.parse(response.data))
     },
     enterDirectoryDirectly(vec, index) {
@@ -249,7 +250,8 @@ export default {
       this.clearWidget()
       this.rootPath = `/${paths.join('/')}`
       if (this.rootPath[this.rootPath.length - 1] !== '/') this.rootPath += '/'
-      FilePond.setOptions({server: trimPath(`${this.prefix}${this.rootPath}`)})
+      const self = this
+      FilePond.setOptions({server: {url:trimPath(`${this.prefix}${this.rootPath}`), headers: {id: self.token}}})
       this.communicator.list(this.token, this.rootPath, this.prefix).then(response => this.parse(response.data))
     },
     goBack() {
@@ -259,13 +261,15 @@ export default {
       paths.pop()
       this.clearWidget()
       this.rootPath = paths.length > 0 ? `/${paths.join('/')}/` : '/'
-      FilePond.setOptions({server: trimPath(`${this.prefix}${this.rootPath}`)})
+      const self = this
+      FilePond.setOptions({server: {url:trimPath(`${this.prefix}${this.rootPath}`), headers: {id: self.token}}})
       this.communicator.list(this.token, this.rootPath, this.prefix).then(response => this.parse(response.data))
     },
     goHome() {
       this.clearWidget()
       this.rootPath = `/`
-      FilePond.setOptions({server: trimPath(`${this.prefix}${this.rootPath}`)})
+      const self = this
+      FilePond.setOptions({server: {url:trimPath(`${this.prefix}${this.rootPath}`), headers: {id: self.token}}})
       this.communicator.list(this.token, this.rootPath, this.prefix).then(response => this.parse(response.data))
     },
     clearWidget() {
@@ -294,10 +298,10 @@ export default {
       }
       arr = this.sortByFileTypeAndName(arr)
       arr.forEach(e => {this.widget.push(e)})
-      console.info(`widget:`)
-      this.widget.forEach(e => {
-        console.info(`  ${e.fileName}`)
-      })
+      // console.info(`widget:`)
+      // this.widget.forEach(e => {
+      //   console.info(`  ${e.fileName}`)
+      // })
     },
     sortByName(arr) {
       arr.sort((o0,o1)=>{return o0.fileName.localeCompare(o1.fileName)})

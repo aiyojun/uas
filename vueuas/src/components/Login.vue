@@ -1,11 +1,17 @@
 <template>
-  <div style="position: fixed; width: 100%; height: 100%; display: flex; justify-content: center;">
-    <div style="position:absolute; width: 100%; height:100%; background: linear-gradient(110deg, #8EC5FC, #E0C3FC); z-index: -1;"></div>
+  <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center;">
+    <div style="position:absolute; width: 100%; height:100%; background: linear-gradient(110deg, #8EC5FC, #E0C3FC); z-index: -1;">
+      <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 24px; text-align: center;">
+        <span style="color: white; font-size: 12px; font-weight: bold;">Copyright © 2022 All rights reserved.</span>
+      </div>
+    </div>
     <div class="login-outer-container">
       <div class="login-container">
         <div class="login-inner-container">
           <div style="width: 100%; text-align: center; margin: 20px 0;">
-            <h1 class="login-title" style="display: inline; font-size: 72px; color: #9599E2;">uas</h1>
+<!--            <h1 class="login-title" style="display: inline; font-size: 72px; color: #9599E2;">uas</h1>-->
+            <span class="logo-text-0">Stars</span>
+            <span class="logo-text-1">Picking</span>
           </div>
           <div style="display: flex; flex-direction: column; width: 100%; margin-top: 10px;">
             <label class="login-label">Username</label>
@@ -75,6 +81,7 @@ export default {
   margin: 0;
   padding: 0;
   color: #555;
+  font-family: Roboto, Helvetica, sans-serif;
 }
 
 @media screen and (max-width: 480px) {
@@ -108,6 +115,8 @@ export default {
   }
 }
 
+.logo-text-0 { font-size: 32px; font-weight: bold; color: white; background: linear-gradient(110deg, #8EC5FC, #E0C3FC); border-radius: 8px; padding: 3px 10px; }
+.logo-text-1 { font-size: 32px; font-weight: bold; margin-left: 5px; background: linear-gradient(110deg, #8EC5FC, #E0C3FC); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 
 .login-title {
   background: linear-gradient(110deg, #8EC5FC, #E0C3FC);

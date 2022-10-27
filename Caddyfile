@@ -1,0 +1,18 @@
+http://127.0.0.1:8081 {
+    log {
+        output stdout
+    }
+
+    root vueuas/www
+
+    file_server
+
+    handle_path /login {
+    	reverse_proxy http://127.0.0.1:8083
+    	rewrite * /login
+    }
+
+    handle /fs* {
+        reverse_proxy http://127.0.0.1:8083
+    }
+}

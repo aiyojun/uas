@@ -71,17 +71,20 @@ class FileManagerHandler(RequestHandler):
             self.write(FileManagerHandler.list_dir(relative_path))
         else:
             real_file_path = FileManagerHandler.get_file_path(relative_path)
-            bytes_n = os.stat(real_file_path).st_size
+            # bytes_n = os.stat(real_file_path).st_size
+            bytes_n = 0
             self.set_header("Content-Description", "File Transfer")
             self.set_header("Content-Type", "application/octet-stream")
-            self.set_header("Content-Length", str(bytes_n))
-            self.set_header("Content-Disposition", FileManagerHandler.real_file_name(real_file_path))
+            self.set_header("Content-Disposition", FileManagerHandler.real_file_name(real_file_path).encode("utf-8"))
             self.set_header("Content-Transfer-Encoding", "binary")
             with open(real_file_path, 'rb+') as fp:
-                line = fp.readline()
-                while line:
-                    self.write(line)
-                    line = fp.readline()
+                chunk = fp.read(16 * 1024)
+                while chunk:
+                    bytes_n += len(chunk)
+                    self.write(chunk)
+                    chunk = fp.read(16 * 1024)
+            self.set_header("Content-Length", str(bytes_n))
+        self.finish()
 
     def post(self, *arg, **kwargs):
         relative_path = unquote(self.request.path)
@@ -106,6 +109,7 @@ class FileManagerHandler(RequestHandler):
             with open(real_file_path, 'wb+') as fp:
                 fp.write(file["body"])
         self.write({"code": 200})
+        self.finish()
 
     def delete(self, *arg, **kwargs):
         relative_path = unquote(self.request.path)

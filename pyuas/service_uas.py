@@ -1,8 +1,12 @@
+import mimetypes
 import os
 import json
 import logging
 import argparse
+from functools import partial
 
+from tornado import gen
+from tornado.httpclient import AsyncHTTPClient, HTTPRequest
 from tornado.web import Application, RequestHandler
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
@@ -157,16 +161,66 @@ class UserLoginHandler(RequestHandler):
             })
 
 
+# class HttpLinks:
+#     links = {}
+#     def obtain(self, target):
+#         if target not in self.links:
+#             links[target] = AsyncHTTPClient()
+async_http = AsyncHTTPClient()
+
+
 class GateHandler(RequestHandler):
     @staticmethod
     def split_path(path):
         return list(filter(lambda x: len(x) != 0, path.split('/')))
 
-    def proxy(self, status=302):
-        prefix = GateHandler.split_path(self.request.path)[0]
+    @gen.coroutine
+    def multipart_producer(self, boundary, write):
+        boundary_bytes = boundary.encode()
+        for form_name, many_files in self.request.files.items():
+            for file_entity in many_files:
+                if "filename" not in file_entity or "body" not in file_entity:
+                    continue
+                filename = file_entity["filename"]
+                filename_bytes = filename.encode()
+                formname_bytes = form_name.encode()
+                mtype = mimetypes.guess_type(filename)[0] or "application/octet-stream"
+                buf = (
+                        (b"--%s\r\n" % boundary_bytes)
+                        + (
+                                b'Content-Disposition: form-data; name="%s"; filename="%s"\r\n'
+                                % (formname_bytes, filename_bytes)
+                        )
+                        + (b"Content-Type: %s\r\n" % mtype.encode())
+                        + b"\r\n"
+                )
+                yield write(buf)
+                yield write(file_entity["body"])
+                yield write(b"\r\n")
+
+        yield write(b"--%s--\r\n" % (boundary_bytes,))
+
+    async def proxy(self, method="GET"):
+        sep = GateHandler.split_path(self.request.path)
+        if len(sep) == 0:
+            self.write({
+                "code": 400,
+                "error": "No specific service prefix!"
+                })
+            return
+        prefix = sep[0]
+
         global limited_prefix
         if prefix in limited_prefix:
-            token = self.get_query_argument("id")
+            cookie = self.request.headers.get("Cookie")
+            token = list(filter(lambda arr: len(arr) == 3 and arr[0] == "UserToken",
+                                list(map(lambda s: s.strip().partition("="), cookie.split(";")))))[0][2]
+            if token is None:
+                token = ""
+            if token == "":
+                token = self.get_query_argument("id", default="")
+            if token == "":
+                token = self.request.headers.get("id")
             try:
                 userManager.validate(token, limited_prefix.get(prefix).get("service_id"))
             except Exception as e:
@@ -174,18 +228,38 @@ class GateHandler(RequestHandler):
                     "code": 401,
                     "error": "Authentication error, %s" % str(e),
                 })
-                self.finish()
+                # self.finish()
                 return
-            self.redirect("http://%s%s" % (limited_prefix.get(prefix).get("target"), self.request.uri), status=status)
+            if method == "GET":
+                response = await async_http.fetch(
+                    HTTPRequest("http://%s%s" % (limited_prefix.get(prefix).get("target"), self.request.uri)))
+            else:
+                if len(self.request.files) != 0:
+                    boundary = list(filter(lambda arr: arr[0] == "boundary",
+                                           list(map(lambda s: s.strip().partition("="),
+                                                    self.request.headers.get("Content-Type").split(";")))))[0][2]
+                    producer = partial(self.multipart_producer, boundary)
+                    response = await async_http.fetch(
+                        "http://%s%s" % (limited_prefix.get(prefix).get("target"), self.request.uri),
+                        method="POST",
+                        headers={"Content-Type": "multipart/form-data; boundary=%s" % boundary},
+                        body_producer=producer)
+                else:
+                    response = await async_http.fetch(
+                        "http://%s%s" % (limited_prefix.get(prefix).get("target"), self.request.uri),
+                        method="POST",
+                        headers=self.request.headers,
+                        body=self.request.body)
+            self.write(response.body)
+            # self.redirect("http://%s%s" % (limited_prefix.get(prefix).get("target"), self.request.uri), status=status)
         else:
             self.write({"code": 404, "error": "Unknown service!"})
-            self.finish()
 
-    def get(self, *arg, **kwargs):
-        self.proxy()
+    async def get(self, *arg, **kwargs):
+        await self.proxy()
 
-    def post(self, *arg, **kwargs):
-        self.proxy(307)
+    async def post(self, *arg, **kwargs):
+        await self.proxy("POST")
 
 
 class Service:
