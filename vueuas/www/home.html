@@ -1,19 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf8">
     <title>uas</title>
     <link rel="stylesheet" type="text/css" href="fonts/roboto/roboto.css">
     <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
     <link rel="stylesheet" type="text/css" href="micro-filemanager/filemanager.css">
     <script src="micro-filemanager/filemanager.umd.min.js"></script>
+
+
+    <style>
+        :root {
+            --footprint-color: #808080;
+            --primary-color: #202124;
+            --hover-background-color: rgba(0,0,0,.1);
+            --primary-background-color: #eee;
+        }
+        html, body { margin: 0; padding: 0; }
+        .central { display: flex; justify-content: center; align-items: center; }
+        .x-shadow { box-shadow: 1px 0 3px rgba(0,0,0,0.1); }
+        .y-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .content { font-size: 14px; }
+        .comment { font-size: 12px; }
+        li { text-decoration: none; }
+        .y-space { margin-bottom: 10px; }
+        .x-space { margin-right: 10px; }
+        .pointer { cursor: pointer; }
+        .linear-text { width: 100%; white-space: nowrap; text-overflow:ellipsis; overflow-x: hidden; }
+
+        .nav-icon { width: 20px; height: 20px; }
+
+        .nav-li { border-radius: 8px; padding-top: 10px; padding-bottom: 10px; display: flex; align-items: center; }
+        .nav-li:hover { background-color: var(--hover-background-color); font-weight: bold; }
+        .nav-text { color: var(--footprint-color); }
+        .nav-text:hover { color: var(--primary-color); }
+
+        .logo-text-0 { font-size: 20px; font-weight: bold; color: white; background: linear-gradient(110deg, #8EC5FC, #E0C3FC); border-radius: 8px; padding: 3px 10px; }
+        .logo-text-1 { font-size: 20px; font-weight: bold; background: linear-gradient(110deg, #8EC5FC, #E0C3FC); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    </style>
 </head>
 <body style="font-family: Roboto, Helvetica, sans-serif;">
-    <div id="app">
-        <filemanager prefix="/fs"></filemanager>
+
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+        <div style="height: 100%; width: 280px; position: absolute; top: 0; left: 0; z-index: 2;" class="x-shadow">
+            <div style="width: 100%; height: 80px;" class="central">
+                <div>
+                    <span class="logo-text-0">Stars</span>
+                    <span class="logo-text-1">Picking</span>
+                </div>
+            </div>
+
+            <div style="width: calc(100% - 20px); height: 0; position: relative; left: 10px; border-bottom: 1px solid #ddd; margin-bottom: 20px;"></div>
+
+            <div style="min-height: calc(100vh - 21px - 80px - 60px);">
+                <div style="width: calc(100% - 20px); padding-left: 10px;">
+                    <ul style="padding: 0; margin: 0;">
+                        <li onclick="moduleManager.openModule('macVision')" class="nav-li y-space pointer linear-text"><img class="nav-icon x-space" style="margin-left: 10px;" src="./assets/home.svg" alt=""/><span class="nav-text">Machine Vision</span></li>
+                        <li onclick="moduleManager.openModule('fsManager')" class="nav-li y-space pointer linear-text"><img class="nav-icon x-space" style="margin-left: 10px;" src="./assets/fire.svg" alt=""/><span class="nav-text">File System</span></li>
+                        <li onclick="moduleManager.openModule('macVision')" class="nav-li y-space pointer linear-text"><img class="nav-icon x-space" style="margin-left: 10px;" src="./assets/camera.svg" alt=""/><span class="nav-text">Monitor</span></li>
+                        <li onclick="moduleManager.openModule('macVision')" class="nav-li y-space pointer linear-text"><img class="nav-icon x-space" style="margin-left: 10px;" src="./assets/member.svg" alt=""/><span class="nav-text">Member</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="height: 60px; width: 100%;" class="central">
+                <div style="width: calc(100% - 20px); height: 32px; background: rgba(0,0,0,0.1); border-radius: 32px;"></div>
+            </div>
+        </div>
+
+        <div style="height: 100%; width: calc(100% - 280px - 20px); padding-left: 10px; padding-right: 10px; position: absolute; top: 0; right: 0; z-index: 1; background-color: #fff; overflow: auto;">
+            <div style="width: calc(100% - 280px - 20px); position: fixed; background-color: white; z-index: 2; right: 0; height: 60px;">
+                <div style="position: absolute; left: 20px; height: 100%;" class="central">
+                    <div style="height: 38px;" class="central pointer">
+                        <span id="page-title" style="color: var(--footprint-color); font-weight: bold; font-size: 18px;"></span>
+                    </div>
+                </div>
+                <div style="position: absolute; right: 20px; height: 100%;" class="central">
+                    <div style="width: 38px; height: 38px; border-radius: 10px; background-color: #f8aba6;" class="central pointer">
+                        <img src="./assets/space_dog.svg" alt="" style="width: 90%;"/>
+                    </div>
+                </div>
+            </div>
+
+            <div style="width: 100%; height: 80px;"></div>
+
+            <div id="macVision">
+
+            </div>
+            <div style="width: calc(100% - 10px); margin-left: auto; margin-right: auto;">
+                <div id="fsManager">
+                    <filemanager prefix="/fs"></filemanager>
+                </div>
+            </div>
+        </div>
     </div>
+
+
     <script>
-        new Vue({components: {filemanager: filemanager}}).$mount('#app')
+        const vFile = new Vue({components: {filemanager: filemanager}})
+        vFile.$mount('#fsManager')
+        const moduleManager = {
+            modules: ['macVision', 'fsManager'],
+            mapper: {'macVision': "Machine Vision", 'fsManager': "File System"},
+            openModule(name) {
+                this.modules.forEach(i => {
+                    document.getElementById(i).style.opacity = i === name ? '1' : '0'
+                    document.getElementById('page-title').innerText = this.mapper[name]
+                })
+            },
+            onCreate() {
+                this.openModule('macVision')
+            }
+        }
+        function openModule() {
+            document.getElementById('macVision').style.opacity = '1'
+        }
+        moduleManager.onCreate()
     </script>
 </body>
 </html>
