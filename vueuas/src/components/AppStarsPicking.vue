@@ -46,7 +46,7 @@
 
     </div>
 
-    <div ref="composedArea">
+    <div ref="composedArea" style="z-index: -3;">
       <h1>buhcasdbcsaS</h1>
     </div>
   </div>
@@ -99,6 +99,11 @@ export default {
         navigator.style.left = '0'
         navigator.style.bottom = 'auto'
         navigator.style.width = 'calc(100% - 20px)'
+
+        composedArea.style.position = 'relative'
+        composedArea.style.marginLeft = '20px'
+        composedArea.style.width = 'calc(100% - 20px - 20px)'
+        composedArea.style.paddingTop = '60px'
       } else {
         // computer size
         this.$refs.logo.style.width = '240px'
@@ -113,6 +118,7 @@ export default {
 
         composedArea.style.position = 'relative'
         composedArea.style.marginLeft = '260px'
+        composedArea.style.width = 'calc(100% - 260px - 20px)'
         composedArea.style.paddingTop = '60px'
       }
     },
