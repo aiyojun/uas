@@ -1,18 +1,18 @@
 <template>
   <div style="position: relative; width: 100%; height: 100%; background-color: #fff; overflow-y: auto; overflow-x: auto;">
     <div style="margin: 10px;">
-      <span>Recent access</span>
+      <span style="margin-left: 10px; font-size: 18px; color: #808080;">Recent access</span>
 
-      <table class="global-table">
+      <table class="global-table" style="margin: 0 10px; width: calc(100% - 20px);">
         <tr class="table-line">
-          <th class="table-header">Remote ip</th>
+          <th class="table-header" style="padding-left: 2%;">Remote ip</th>
           <th class="table-header">Access uri</th>
           <th class="table-header">Time</th>
           <th class="table-header">OS</th>
           <th class="table-header">Browser</th>
           <th class="table-header">
             <div style="display: flex; align-items: center;">
-              <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+              <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
                 <path d="M512 608c-105.888 0-192-86.112-192-192s86.112-192 192-192 192 86.112 192 192S617.888 608 512 608zM512 288c-70.592 0-128 57.408-128 128s57.408 128 128 128c70.592 0 128-57.408 128-128S582.592 288 512 288z"></path>
                 <path d="M512 960c-7.936 0-15.904-2.944-22.08-8.832-12.768-12.224-13.248-32.48-1.056-45.248C575.392 815.2 800 550.336 800 416c0-158.784-129.184-288-288-288-158.784 0-288 129.216-288 288 0 75.616 72.544 206.08 204.256 367.424 11.2 13.728 9.152 33.888-4.544 45.024-13.696 11.168-33.888 9.152-45.024-4.544C233.568 646.176 160 508.928 160 416 160 221.92 317.92 64 512 64s352 157.92 352 352c0 187.36-315.424 520.032-328.832 534.08C528.864 956.672 520.448 960 512 960z"></path>
               </svg>
@@ -23,14 +23,31 @@
           </th>
         </tr>
         <tr v-for="(remoteLink, lineNumber) in views" class="table-line">
-          <td class="table-block" style="width: 180px;" :style="{backgroundColor: (lineNumber + 1) % 2 === 1 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{remoteLink['remote_address'].split(':')[0]}}</td>
-          <td class="table-block" style="width: 180px;" :style="{backgroundColor: (lineNumber + 1) % 2 === 1 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{remoteLink['access_uri']}}</td>
-          <td class="table-block" :style="{backgroundColor: (lineNumber + 1) % 2 === 1 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{new Date(remoteLink['access_time']).Format('yyyy-MM-dd hh:mm:ss')}}</td>
-          <td class="table-block" :style="{backgroundColor: (lineNumber + 1) % 2 === 1 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{remoteLink.hasOwnProperty('extra') ? `${hideNull(remoteLink['extra']['os_family'])} ${hideNull(remoteLink['extra']['os_version'])}` : ''}}</td>
-          <td class="table-block" :style="{backgroundColor: (lineNumber + 1) % 2 === 1 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{remoteLink.hasOwnProperty('extra') ? `${hideNull(remoteLink['extra']['browser_family'])} ${hideNull(remoteLink['extra']['browser_version'])}` : ''}}</td>
-          <td class="table-block" :style="{backgroundColor: (lineNumber + 1) % 2 === 1 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{ipGeo.hasOwnProperty(remoteLink['remote_address'].split(':')[0]) ? buildGeo(ipGeo[remoteLink['remote_address'].split(':')[0]]) : ''}}</td>
+          <td class="table-block" style="padding-left: 2%;" :style="{backgroundColor: (lineNumber + 1) % 2 === 0 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{remoteLink['remote_address'].split(':')[0]}}</td>
+          <td class="table-block" :style="{backgroundColor: (lineNumber + 1) % 2 === 0 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{remoteLink['access_uri']}}</td>
+          <td class="table-block" :style="{backgroundColor: (lineNumber + 1) % 2 === 0 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{new Date(remoteLink['access_time']).Format('yyyy-MM-dd hh:mm:ss')}}</td>
+          <td class="table-block" :style="{backgroundColor: (lineNumber + 1) % 2 === 0 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{remoteLink.hasOwnProperty('extra') ? `${hideNull(remoteLink['extra']['os_family'])} ${hideNull(remoteLink['extra']['os_version'])}` : ''}}</td>
+          <td class="table-block" :style="{backgroundColor: (lineNumber + 1) % 2 === 0 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{remoteLink.hasOwnProperty('extra') ? `${hideNull(remoteLink['extra']['browser_family'])} ${hideNull(remoteLink['extra']['browser_version'])}` : ''}}</td>
+          <td class="table-block" :style="{backgroundColor: (lineNumber + 1) % 2 === 0 ? `rgba(0,0,0,0)` : `rgba(0,0,0,0.03)`}">{{ipGeo.hasOwnProperty(remoteLink['remote_address'].split(':')[0]) ? buildGeo(ipGeo[remoteLink['remote_address'].split(':')[0]]) : ''}}</td>
         </tr>
       </table>
+
+      <div style="width: calc(100% - 20px); margin: 0 10px; height: 24px; display: flex; justify-content: flex-end;">
+        <div class="central pointer" style="width: 24px; height: 24px; border: 1px solid #ddd; border-radius: 4px; margin-right: 10px;" @click="goPreviousPage">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+               :fill="(pageNumber + 1 > 1) ? `#333` : `#ddd`">
+            <path d="M671.968 912c-12.288 0-24.576-4.672-33.952-14.048L286.048 545.984c-18.752-18.72-18.752-49.12 0-67.872l351.968-352c18.752-18.752 49.12-18.752 67.872 0 18.752 18.72 18.752 49.12 0 67.872l-318.016 318.048 318.016 318.016c18.752 18.752 18.752 49.12 0 67.872C696.544 907.328 684.256 912 671.968 912z" p-id="5474"></path>
+          </svg>
+        </div>
+
+        <div class="central pointer" style="width: 24px; height: 24px; border: 1px solid #ddd; border-radius: 4px;" @click="goNextPage">
+          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+               :fill="nextPageEnabled ? `#333` : `#ddd`"
+               style="transform: rotateZ(180deg);">
+            <path d="M671.968 912c-12.288 0-24.576-4.672-33.952-14.048L286.048 545.984c-18.752-18.72-18.752-49.12 0-67.872l351.968-352c18.752-18.752 49.12-18.752 67.872 0 18.752 18.72 18.752 49.12 0 67.872l-318.016 318.048 318.016 318.016c18.752 18.752 18.752 49.12 0 67.872C696.544 907.328 684.256 912 671.968 912z" p-id="5474"></path>
+          </svg>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -67,6 +84,13 @@ export default {
       views: [],
       ipHash: {},
       ipGeo: {},
+      pageNumber: 0,
+      maxNumberPage: 10,
+    }
+  },
+  computed: {
+    nextPageEnabled() {
+      return (this.pageNumber + 1) < (~~(this.remoteLinks.length / this.maxNumberPage) + (this.remoteLinks.length % this.maxNumberPage === 0 ? 0 : 1))
     }
   },
   mounted() {
@@ -82,11 +106,16 @@ export default {
               if (remoteLink['geo'] !== undefined && remoteLink['geo'] !== null) {
                 this.$set(this.ipGeo, remoteLink['remote_address'].split(':')[0], remoteLink['geo'])
               }
-              this.views.push(remoteLink);
+              // this.views.push(remoteLink);
             } catch (e) {
 
             }
           }
+          this.views.splice(0, this.views.length)
+          for (let i = 0; i < this.maxNumberPage; i++) {
+            this.views.push(this.remoteLinks[i]);
+          }
+          this.pageNumber = 0
         // })
         // .catch(err => {
         //
@@ -94,6 +123,26 @@ export default {
   },
   methods: {
     hideNull(v) {return (v === null || v === undefined) ? '' : v;},
+    goNextPage() {
+      if (!this.nextPageEnabled) return
+      this.views.splice(0, this.views.length);
+      for (let i = this.maxNumberPage * (this.pageNumber + 1); i < this.maxNumberPage * (this.pageNumber + 2); i++) {
+        if (i > this.remoteLinks.length - 1) {
+          break
+        }
+        this.views.push(this.remoteLinks[i]);
+      }
+      this.$set(this, 'pageNumber', this.pageNumber + 1)
+    },
+    goPreviousPage() {
+      if (this.pageNumber <= 0) return
+      this.views.splice(0, this.views.length);
+      this.$set(this, 'pageNumber', this.pageNumber - 1)
+      for (let i = this.maxNumberPage * this.pageNumber; i < this.maxNumberPage * (this.pageNumber + 1); i++) {
+        this.views.push(this.remoteLinks[i]);
+      }
+
+    },
     sortByTime(asc=true) {
       asc
           ? this.views.sort((o0, o1) => o0['access_time'] < o1['access_time'] ? 1 : -1)
@@ -139,12 +188,17 @@ export default {
 
 <style scoped>
 
+.pointer { cursor: pointer; }
+.central { display: flex; justify-content: center; align-items: center; }
+
 .global-table {
   border-spacing: 0;
+  font-size: 12px;
 }
 
 .table-header {
-  height:48px;
+  height: 36px;
+  color: #707070;
   /*background: linear-gradient(0deg, rgba(230,230,230,1.0), rgba(250,250,250,1.0), rgba(230,230,230,1.0));*/
   /*max-width: 300px;*/
   /*font-size: 16px;*/
@@ -153,20 +207,26 @@ export default {
 }
 
 .table-block {
-  height: 48px;
+  height: 36px;
   text-align: left;
-  /*max-width: 300px;*/
+  min-width: 100px;
+  max-width: 200px;
 
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 
   border-top: 1px solid #ddd;
-  color: #707070;
+  /*color: #707070;*/
 }
 
 .table-line {
+  color: #707070;
+  cursor: pointer;
+}
 
+.table-line:hover {
+  color: mediumseagreen;
 }
 
 </style>
